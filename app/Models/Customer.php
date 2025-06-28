@@ -17,8 +17,10 @@ class Customer extends Model
     protected $fillable = [
         'name',
         'email',
-        'invoice'
+        'phone',
+        'status',
     ];
+
 
     /**
      * The attributes that should be cast.
@@ -27,5 +29,17 @@ class Customer extends Model
      */
     protected $casts = [
         'user_created_at' => 'datetime',
+        'status' => 'boolean', // if using boolean
     ];
+
+    // Relationships
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }
