@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->integer('phone');
             $table->timestamp('user_created_at')->nullable();
-            $table->boolean(column:'invoice')->default(false); // Active status
+            $table->boolean(column:'status')->default(true);    // Active status
         });
     }
 
