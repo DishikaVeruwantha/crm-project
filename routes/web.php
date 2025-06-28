@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ProposalController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,18 +32,42 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/customers', function () {
-    return Inertia::render('Customers');
-})->middleware(['auth', 'verified'])->name('customers');
-
-Route::get('/proposals', function () {
-    return Inertia::render('Proposals');
-})->middleware(['auth', 'verified'])->name('proposals');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::prefix('customers')->middleware(['auth'])->group(function () {
+    Route::get('/', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/create', [CustomerController::class, 'create'])->name('customers.create');
+    Route::post('/', [CustomerController::class, 'store'])->name('customers.store');
+    Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::put('/{customer}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+    Route::patch('/{customer}/status', [CustomerController::class, 'toggleStatus'])->name('customers.toggleStatus');
+});
+
+
+Route::prefix('proposals')->middleware(['auth'])->group(function () {
+    Route::get('/', [ProposalController::class, 'index'])->name('proposals.index');
+    Route::get('/create', [ProposalController::class, 'create'])->name('proposals.create');
+    Route::post('/', [ProposalController::class, 'store'])->name('proposals.store');
+    Route::get('/{proposal}/edit', [ProposalController::class, 'edit'])->name('proposals.edit');
+    Route::put('/{proposal}', [ProposalController::class, 'update'])->name('proposals.update');
+    Route::delete('/{proposal}', [ProposalController::class, 'destroy'])->name('proposals.destroy');
+    Route::patch('/{proposal}/status', [ProposalController::class, 'toggleStatus'])->name('proposals.toggleStatus');
+});
+
+Route::prefix('invoices')->middleware(['auth'])->group(function () {
+    Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/create', [InvoiceController::class, 'create'])->name('invoices.create');
+    Route::post('/', [InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
+    Route::put('/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
+    Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+    Route::patch('/{invoice}/status', [InvoiceController::class, 'toggleStatus'])->name('invoices.toggleStatus');
+    Route::patch('/{invoice}/send', [InvoiceController::class, 'sendInvoice'])->name('invoices.send');
 });
 
 require __DIR__.'/auth.php';
