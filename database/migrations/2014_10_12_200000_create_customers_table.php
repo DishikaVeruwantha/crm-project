@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->integer('phone');
-            $table->timestamp('user_created_at')->nullable();
             $table->boolean(column:'status')->default(true);    // Active status
+            $table->timestamps(); // adds both 'created_at' and 'updated_at'
         });
     }
 
