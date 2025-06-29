@@ -9,6 +9,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Mail\InvoiceMail;
 use Illuminate\Support\Facades\Mail;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
 
 class InvoiceController extends Controller
 {
@@ -33,6 +35,7 @@ class InvoiceController extends Controller
     {
         $data = $request->validate([
             'customer_id' => 'required|exists:customers,id',
+            'title' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'due_date' => 'required|date',
             'status' => 'nullable|string',
@@ -93,11 +96,48 @@ class InvoiceController extends Controller
         // Get the customer
         $customer = $invoice->customer;
 
-        // Send the email
+        // Set your Stripe secret key
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        // Create a Stripe Checkout Session
+        $session = StripeSession::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'usd',
+                    'unit_amount' => (int) ($invoice->amount * 100), // amount in cents
+                    'product_data' => [
+                        'name' => $invoice->title ?? 'Invoice Payment',
+                    ],
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => route('stripe.success', [
+                'invoice' => $invoice->id,
+                'session_id' => '{CHECKOUT_SESSION_ID}',
+            ]),
+            'cancel_url' => route('stripe.cancel', $invoice),
+            'metadata' => [
+                'invoice_id' => $invoice->id,
+            ]
+        ]);
+
+        // Send the email with Stripe URL
         if ($customer && $customer->email) {
-            Mail::to($customer->email)->send(new InvoiceMail($invoice));
+            Mail::to($customer->email)->send(new InvoiceMail($invoice, $session->url));
         }
 
-        return redirect()->route('invoices.index')->with('success', 'Invoice marked as sent.');
+        return redirect()->route('invoices.index')->with('success', 'Invoice sent and payment link generated.');
     }
+
+    public function paymentSuccess(Invoice $invoice)
+    {
+        $invoice->status = 'paid';
+        $invoice->save();
+
+        // Redirect to a minimal confirmation page
+        return view('payment_success');
+    }
+
 }
