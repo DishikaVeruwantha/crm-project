@@ -7,6 +7,7 @@ const props = defineProps({customers: Array});
 
 const form = useForm({
     customer_id: '',
+    title: '',
     amount: '',
     due_date: '',
     status: 'unpaid',
@@ -33,6 +34,7 @@ function submit() {
                         <select v-model="form.customer_id">
                             <option v-for="c in customers" :value="c.id" :key="c.id">{{ c.name }}</option>
                         </select>
+                        <input v-model="form.title" type="text" placeholder="Title" />
                         <input v-model="form.amount" type="number" placeholder="Amount" />
                         <input v-model="form.due_date" type="date" />
                         <select v-model="form.status">

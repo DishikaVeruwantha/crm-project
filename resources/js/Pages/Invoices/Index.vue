@@ -31,12 +31,13 @@ function remove(id) {
                     <table class="table-auto w-full mt-4">
                         <thead>
                         <tr>
-                            <th>Customer</th><th>Amount</th><th>Status</th><th>Sent</th><th>Due</th><th>Actions</th>
+                            <th>Customer</th><th>Title</th><th>Amount</th><th>Status</th><th>Sent</th><th>Due</th><th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="invoice in invoices" :key="invoice.id">
                             <td>{{ invoice.customer.name }}</td>
+                            <td>{{ invoice.title }}</td>
                             <td>{{ invoice.amount }}</td>
                             <td>{{ invoice.status }}</td>
                             <td>{{ invoice.sent ? 'Yes' : 'No' }}</td>
