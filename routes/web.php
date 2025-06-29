@@ -70,4 +70,6 @@ Route::prefix('invoices')->middleware(['auth'])->group(function () {
     Route::patch('/{invoice}/send', [InvoiceController::class, 'sendInvoice'])->name('invoices.send');
 });
 
+Route::get('/stripe/success/{invoice}', [InvoiceController::class, 'paymentSuccess'])->name('stripe.success');
+Route::get('/stripe/cancel/{invoice}', [InvoiceController::class, 'paymentCancel'])->name('stripe.cancel');
 require __DIR__.'/auth.php';
