@@ -7,6 +7,8 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Mail\InvoiceMail;
+use Illuminate\Support\Facades\Mail;
 
 class InvoiceController extends Controller
 {
@@ -87,6 +89,14 @@ class InvoiceController extends Controller
     {
         $invoice->sent = true;
         $invoice->save();
+
+        // Get the customer
+        $customer = $invoice->customer;
+
+        // Send the email
+        if ($customer && $customer->email) {
+            Mail::to($customer->email)->send(new InvoiceMail($invoice));
+        }
 
         return redirect()->route('invoices.index')->with('success', 'Invoice marked as sent.');
     }
