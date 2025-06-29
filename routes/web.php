@@ -3,7 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,9 +30,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -71,5 +73,12 @@ Route::prefix('invoices')->middleware(['auth'])->group(function () {
 });
 
 Route::get('/stripe/success/{invoice}', [InvoiceController::class, 'paymentSuccess'])->name('stripe.success');
+
 Route::get('/stripe/cancel/{invoice}', [InvoiceController::class, 'paymentCancel'])->name('stripe.cancel');
+
+
+Route::get('/transactions', [TransactionController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('transactions.index');
+
 require __DIR__.'/auth.php';
