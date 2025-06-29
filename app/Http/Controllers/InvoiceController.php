@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\Customer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -60,6 +61,7 @@ class InvoiceController extends Controller
     {
         $data = $request->validate([
             'customer_id' => 'required|exists:customers,id',
+            'title' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'due_date' => 'required|date',
             'status' => 'nullable|string',
@@ -135,6 +137,12 @@ class InvoiceController extends Controller
     {
         $invoice->status = 'paid';
         $invoice->save();
+
+        Transaction::create([
+            'invoice_id' => $invoice->id,
+            'amount' => $invoice->amount,
+            'transaction_date' => now(),
+        ]);
 
         // Redirect to a minimal confirmation page
         return view('payment_success');
