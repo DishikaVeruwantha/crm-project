@@ -3,6 +3,7 @@ import { router } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+
 defineProps({ invoices: Array });
 
 function send(id) {
@@ -21,40 +22,135 @@ function remove(id) {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Invoices</h2>
+            <h2 class="text-2xl font-semibold text-gray-800">Invoices</h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <Link href="/invoices/create" class="btn">+ New Invoice</Link>
-                    <table class="table-auto w-full mt-4">
-                        <thead>
-                        <tr>
-                            <th>Customer</th><th>Title</th><th>Amount</th><th>Status</th><th>Sent</th><th>Due</th><th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="invoice in invoices" :key="invoice.id">
-                            <td>{{ invoice.customer.name }}</td>
-                            <td>{{ invoice.title }}</td>
-                            <td>{{ invoice.amount }}</td>
-                            <td>{{ invoice.status }}</td>
-                            <td>{{ invoice.sent ? 'Yes' : 'No' }}</td>
-                            <td>{{ invoice.due_date }}</td>
-                            <td class="flex items-center space-x-2">
-                                <Link :href="`/invoices/${invoice.id}/edit`">
-                                    <button class="bg-blue-600 text-white px-3 py-1 rounded">
-                                        Edit
-                                    </button>
-                                </Link>
-                                <button @click="send(invoice.id)" class="bg-green-600 text-white px-3 py-1 rounded mr-2">Send</button>
-                                <button @click="remove(invoice.id)" class="bg-red-600 text-white px-3 py-1 rounded mr-2">Delete</button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-6">
+                <Link
+                    href="/invoices/create"
+                    class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow transition"
+                >
+                    + New Invoice
+                </Link>
+            </div>
+
+            <div class="overflow-x-auto bg-white shadow rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                    <tr>
+                        <th
+                            scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Customer
+                        </th>
+                        <th
+                            scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Title
+                        </th>
+                        <th
+                            scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Amount
+                        </th>
+                        <th
+                            scope="col"
+                            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Status
+                        </th>
+                        <th
+                            scope="col"
+                            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Sent
+                        </th>
+                        <th
+                            scope="col"
+                            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Due Date
+                        </th>
+                        <th
+                            scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tr
+                        v-for="invoice in invoices"
+                        :key="invoice.id"
+                        class="hover:bg-gray-50 transition"
+                    >
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ invoice.customer.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            {{ invoice.title }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-right font-semibold">
+                            ${{ Number(invoice.amount).toFixed(2) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span
+                                    :class="{
+                                        'inline-flex px-2 py-1 text-xs font-semibold rounded-full':
+                                            true,
+                                        'bg-green-100 text-green-800': invoice.status === 'paid',
+                                        'bg-yellow-100 text-yellow-800': invoice.status === 'pending',
+                                        'bg-red-100 text-red-800': invoice.status === 'overdue',
+                                        'bg-gray-100 text-gray-800': !['paid', 'pending', 'overdue'].includes(invoice.status),
+                                    }"
+                                >
+                                    {{ invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1) }}
+                                </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-700">
+                            {{ invoice.sent ? 'Yes' : 'No' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-700">
+                            {{ invoice.due_date }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end space-x-2">
+                            <Link
+                                :href="`/invoices/${invoice.id}/edit`"
+                                class="inline-flex items-center px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
+                                title="Edit"
+                            >
+                                ✏️ Edit
+                            </Link>
+
+                            <button
+                                @click="send(invoice.id)"
+                                :disabled="invoice.sent"
+                                class="inline-flex items-center px-3 py-1 rounded-md transition
+                                text-white
+                                bg-green-600 hover:bg-green-700
+                                disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                title="Send"
+                            >
+                                {{ invoice.sent ? '✅ Sent' : '📤 Send' }}
+                            </button>
+
+                            <button
+                                @click="remove(invoice.id)"
+                                class="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md transition"
+                                title="Delete"
+                            >
+                                🗑 Delete
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </AuthenticatedLayout>
