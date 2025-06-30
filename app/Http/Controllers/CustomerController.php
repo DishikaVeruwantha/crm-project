@@ -27,9 +27,9 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|regex:/^[a-zA-Z ]{3,30}$/',
             'email' => 'nullable|email|unique:customers,email',
-            'phone' => 'nullable|string',
+            'phone' => 'nullable|numeric',
         ]);
 
         Customer::create($data);
@@ -49,9 +49,9 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer)
     {
         $data = $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|regex:/^[a-zA-Z ]{3,30}$/',
             'email' => 'required|email|unique:customers,email,' . $customer->id,
-            'phone' => 'nullable|string',
+            'phone' => 'nullable|numeric',
         ]);
 
         $customer->update($data);
