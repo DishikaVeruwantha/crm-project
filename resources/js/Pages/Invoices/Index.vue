@@ -3,17 +3,48 @@ import { router } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Swal from "sweetalert2";
 
 defineProps({ invoices: Array });
 
 function send(id) {
-    router.patch(`/invoices/${id}/send`);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will send the invoice to the customer.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#71edb6',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, send it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.patch(`/invoices/${id}/send`, {}, {
+                onSuccess: () => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Invoice Sent!',
+                        text: 'The invoice was successfully sent.',
+                    });
+                }
+            });
+        }
+    });
 }
 
 function remove(id) {
-    if (confirm('Delete this invoice?')) {
-        router.delete(`/invoices/${id}`);
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This action can't be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e3342f',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/invoices/${id}`);
+        }
+    })
 }
 </script>
 

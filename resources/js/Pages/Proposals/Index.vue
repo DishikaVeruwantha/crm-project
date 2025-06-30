@@ -1,12 +1,23 @@
 <script setup>
 import { router, Link, Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Swal from "sweetalert2";
 defineProps({ proposals: Array });
 
 function deleteProposal(id) {
-    if (confirm('Are you sure you want to delete this proposal?')) {
-        router.delete(`/proposals/${id}`);
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This action can't be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e3342f',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/proposals/${id}`);
+        }
+    })
 }
 </script>
 

@@ -3,19 +3,40 @@ import { router } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 defineProps({ customers: Array });
 
 function toggleStatus(id) {
-    if (confirm('Change customer status?')) {
-        router.patch(route('customers.toggleStatus', id));
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You are about to change the status of this customer.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#7b4bcd',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.patch(route('customers.toggleStatus', id));
+        }
+    })
 }
-
+// Function to confirm delete
 function deleteCustomer(id) {
-    if (confirm('Are you sure?')) {
-        router.delete(`/customers/${id}`);
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This action can't be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e3342f',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/customers/${id}`);
+        }
+    })
 }
 </script>
 
