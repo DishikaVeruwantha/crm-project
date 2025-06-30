@@ -148,7 +148,7 @@ function remove(id) {
                             {{ invoice.sent ? 'Yes' : 'No' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-700">
-                            {{ invoice.due_date }}
+                            {{ invoice.due_date.split('T')[0] }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end space-x-2">
                             <Link
