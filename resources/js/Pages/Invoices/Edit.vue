@@ -32,7 +32,7 @@ function submit() {
             <div class="bg-white shadow-md rounded-2xl p-8">
                 <h1 class="text-xl font-semibold text-gray-800 mb-6">Update Invoice Details</h1>
 
-                <form @submit.prevent="submit" class="space-y-6">
+                <form @submit.prevent="submit" novalidate class="space-y-6">
                     <!-- Customer -->
                     <div>
                         <label for="customer_id" class="block text-sm font-medium text-gray-700 mb-1">

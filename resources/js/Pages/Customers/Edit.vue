@@ -27,14 +27,14 @@ function submit() {
             <div class="bg-white shadow-md rounded-2xl p-8">
                 <h1 class="text-xl font-semibold text-gray-800 mb-6">Update Customer Details</h1>
 
-                <form @submit.prevent="submit" class="space-y-6">
+                <form @submit.prevent="submit"  novalidate class="space-y-6">
                     <!-- Name -->
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
                         <input
                             id="name"
                             v-model="form.name"
-                            type="text"
+                            type="email"
                             class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                             placeholder="Full name"
                         />
@@ -49,7 +49,8 @@ function submit() {
                         <input
                             id="email"
                             v-model="form.email"
-                            type="email"
+                            type="text"
+                            autocomplete="email"
                             class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                             placeholder="Email address"
                         />
