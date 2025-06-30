@@ -43,7 +43,7 @@ const user = page.props.auth.user;
                                     <button class="flex items-center space-x-2 focus:outline-none">
                                         <img
                                             class="h-9 w-9 rounded-full object-cover border border-gray-300"
-                                            src="https://ui-avatars.com/api/?name={{ user.name }}&background=4f46e5&color=fff"
+                                            :src="`https://ui-avatars.com/api/?name=${user.name[0]}&background=4f46e5&color=fff`"
                                             alt="User Avatar"
                                         />
                                         <span class="hidden sm:inline text-sm font-medium text-gray-700">{{ user.name }}</span>
